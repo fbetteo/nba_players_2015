@@ -4,10 +4,6 @@ library(tidyverse)
 library(lubridate)
 
 
-inputs_path = toString("D://R//NBA Analysis - Mayo 2017//Inputs")
-images_path = toString("D://R//NBA Analysis - Mayo 2017//Images")
-src_path    = toString("D://R//NBA Analysis - Mayo 2017//Src")
-
 # Import
 
 rawdata= vroom::vroom("inputs/basketball_research_data_set.csv")

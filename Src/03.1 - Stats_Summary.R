@@ -5,6 +5,7 @@ library(stringr)
 library(lubridate)
 
 rawdata = read_rds("working/rawdata.rds")
+team_level = read_rds("working/team_level.rds")
 
 # Stats Player By Season ----
 
@@ -27,8 +28,8 @@ team_stats <- rawdata %>% group_by(team, season) %>% summarise(points = sum(pts,
 
 ## Allowed points by Team per Season
 
-opp_points_home <- full3 %>% group_by(team, season) %>% summarise(allowed_points = sum(opp_pts, na.rm = TRUE))
-opp_points_away <- full3 %>% group_by(opp, season) %>% summarise(allowed_points = sum(home_pts, na.rm = TRUE))
+opp_points_home <- team_level %>% group_by(team, season) %>% summarise(allowed_points = sum(opp_pts, na.rm = TRUE))
+opp_points_away <- team_level %>% group_by(opp, season) %>% summarise(allowed_points = sum(home_pts, na.rm = TRUE))
 opp_points_season <- merge(opp_points_home, opp_points_away, by.x = c("team","season"), by.y = c("opp","season"))
 opp_points_season <- rename(opp_points_season, allowed_points_home  = allowed_points.x, allowed_points_away  = allowed_points.y)
 opp_points_season$allowed_points_total = opp_points_season$allowed_points_home + opp_points_season$allowed_points_away
@@ -38,10 +39,10 @@ opp_points_season$allowed_points_total = opp_points_season$allowed_points_home +
 
 # WIN/LOSES ----
 
-home_standing <- full3 %>% group_by(team,season) %>% summarise(home_wins =  sum(home_result =="W", na.rm = TRUE),
+home_standing <- team_level %>% group_by(team,season) %>% summarise(home_wins =  sum(home_result =="W", na.rm = TRUE),
                                                                home_loses = sum(home_result =="L", na.rm = TRUE)) %>% as.data.frame()
 
-away_standing <- full3 %>% group_by(opp, season) %>% summarise(away_wins = sum(home_result == "L", na.rm =TRUE),
+away_standing <- team_level %>% group_by(opp, season) %>% summarise(away_wins = sum(home_result == "L", na.rm =TRUE),
                                                                     away_loses =  sum(home_result =="W", na.rm =TRUE)) %>% as.data.frame()
 
 standings <- merge(home_standing, away_standing, by.x = c("team","season"), by.y = c("opp","season"))
